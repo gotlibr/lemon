@@ -1,0 +1,99 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strsplit.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hlriabts <hlriabts@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/11/06 14:34:13 by hlriabts          #+#    #+#             */
+/*   Updated: 2017/11/06 14:35:14 by hlriabts         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static  int     g_words;
+static  char	**g_str;
+
+static int	  word_count(const char *s, char c)
+{
+	int i;
+	int ind;
+	int count;
+	
+	count = 0;
+	i = 0;
+	ind = 0;
+	while (i < ft_strlen(s))
+	{
+		if(s[i] == c)
+		{
+			i++;
+			ind = 0;
+		}
+		else if(ind == 0)
+		{
+			count++;
+			i++;
+			ind = 1;
+		}
+		else
+		 i++;
+	}
+	return(count);
+}
+
+static void	 *memmory_main( char c, char const *s)
+{
+   g_words = 0;
+   g_words = word_count(s, c);
+	if((g_str = (char **)malloc((g_words+1) * sizeof(char *))) == NULL)
+	{
+		free(g_str);
+		return(NULL); 
+	}
+	return(g_str);
+}
+
+static void	 *memory_string( int *i, char const *s, int *k, int *n)
+{
+	if((g_str[*i++] = ft_strsub(s, *k, *n)) == NULL)
+	{
+			while(*i >= 0)
+			{
+				free(g_str[*i]);
+				(*i)--;
+			}
+			free(g_str);
+			return (NULL);
+	}
+	return(g_str);
+}
+
+char			**ft_strsplit(char const *s, char c)
+{
+	int	 i;
+	int	k;
+	int	 n;
+
+	n = 0;
+	i = 0;
+	k = 0;
+	if (s == NULL)
+		return(NULL);
+	if(memmory_main(c, s) == NULL)
+		return(NULL);
+	while(g_words-- > 0)
+	{
+		while(s[k] == c)
+			k++;
+		while (s[k + n++] != c)
+			n++;
+		if(memory_string(&i, s, &k, &n) == NULL)
+			return (NULL);
+		k = k + n;
+		n = 0;
+	}
+	g_str[i] = 0;
+	return(g_str);
+}
